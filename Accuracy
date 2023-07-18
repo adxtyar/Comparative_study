@@ -1,0 +1,15 @@
+from LogicR import Test
+from SVM import TestSVM
+from randomforest import TestrandomF
+from id3 import Testid3
+# print("Printing accuracy of Logistic Regression")
+# Test()
+# print("\n")
+# print("Printing accuracy of SVM")
+# TestSVM()
+# print("\n")
+# print("Printing accuracy of Random Forest Classifier")
+TestrandomF()
+print("\n")
+print("Printing accuracy of id3")
+# Testid3()
