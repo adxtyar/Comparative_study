@@ -1,0 +1,74 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn import svm
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
+import warnings
+warnings.filterwarnings('ignore')
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
+dataset= pd.read_csv('Weather.csv')
+features = ['precipitation','temp_max','temp_min','wind']
+
+dataset['weather']=dataset['weather'].map({'rain':1,'drizzle':0,'fog':0,'sun':0,'snow':0})
+target = ['weather']
+X = dataset[features]
+Y = dataset[target]
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3)
+
+'''model = svm.SVC()
+parameters = {
+              'kernel':['linear','poly','rbf','sigmoid'],
+              'C':[1, 5, 10, 20]
+               
+}
+
+classifier = GridSearchCV(model, parameters, cv=5)
+
+classifier.fit(X, Y)
+
+best_parameters = classifier.best_params_
+print(best_parameters)'''
+
+
+model = svm.SVC(C=20, kernel= 'poly')
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+
+predict = model.predict([[4,4.2,0.4,5]])
+
+predict4 = model.predict([[10,10,2,4]])
+predict5 = model.predict([[0,10,2.8,2]])
+
+# print(predict)
+# print(predict4)
+# print(predict5)
+
+def TestSVM():
+    print("Testing Accuracy in SVM: {}".format(accuracy_score(y_test,y_pred)))
+    print("Training Accuracy in SVM: {}".format(model.score(X_train, y_train)))
+
+    print('mean_absolute_error SVM : ', mean_absolute_error(y_test, y_pred))
+
+#print(y_pred)
+#print(y2)
+# model evaluation'''
+
+
+
+def GraphS():
+    y1=y_test.to_numpy().flatten()  #y_test was a df therefore to numpy flatten method
+    y2=y_pred.flatten()
+    df = pd.DataFrame({'Actual': y1, 'Predicted': y2})
+    df1= df.head(25)
+    print("SVM" + str(df1))
+    df1.plot(kind='bar', figsize=(16,10))
+    plt.xlabel("Entries")
+    plt.ylabel(" Actual vs Prediction")
+    plt.title("Graph of SVM")
+    plt.grid(which='major', linestyle='-',linewidth='0.5', color='green')
+    plt.grid(which='minor', linestyle=':',linewidth='0.5', color='black')
+    plt.show()
