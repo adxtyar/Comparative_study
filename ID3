@@ -1,0 +1,89 @@
+import numpy as np
+import warnings
+warnings.filterwarnings('ignore')
+import pandas as pd
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report, mean_squared_error, \
+    mean_absolute_error
+from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+
+dataset= pd.read_csv('Weather.csv')
+features = ['precipitation','temp_max','temp_min','wind']
+dataset['weather'] = dataset['weather'].map({'rain':1,'drizzle':0,'fog':0,'sun':0,'snow':0})
+target = ['weather']
+
+
+
+
+X = dataset[features]
+Y = dataset[target]
+
+#print(dataset.head())
+
+x_train, x_test, y_train, y_test = train_test_split(X, Y,
+                                                    train_size=0.7, test_size=0.3, shuffle=False)
+
+
+
+
+
+'''print("X_train: {}, x_test: {}".format(len(x_train), len(x_test)))
+print("Y_train: {}, y_test: {}".format(len(y_train), len(y_test)))
+
+print("\n")'''
+
+'''model = DecisionTreeClassifier()
+parameters = { 'criterion' : ['gini', 'entropy'],
+              'max_features' : list(range(2,4,6))
+
+}
+
+
+
+
+
+from sklearn.model_selection import GridSearchCV
+clf = GridSearchCV(model, parameters, cv=5)
+best_clf = clf.fit(X,Y)
+
+bet_cl = best_clf.best_params_
+print(bet_cl)'''
+
+
+
+
+
+model = DecisionTreeClassifier( criterion='gini',
+                               max_features=2, )
+model.fit(x_train, y_train)
+predicted = model.predict(x_test)
+
+# Print results to evaluate model
+
+def Testid3():
+        print ("Training Accuracy ID3: {}".format(model.score(x_train, y_train)))
+
+        print ("Testing Accuracy ID3: {}".format(accuracy_score(y_test, predicted)))
+
+        print('mean_absolute_error ID3 : ', mean_absolute_error(y_test, predicted))
+print("\n")
+
+
+def GraphI():
+    y1=y_test.to_numpy().flatten()  #y_test was a df therefore to numpy flatten method
+    y2=predicted.flatten()
+
+
+    df = pd.DataFrame({'Actual': y1, 'Predicted': y2})
+    #print(df)
+    df1= df.head(25)
+    print("ID3" + str(df1))
+    df1.plot(kind='bar', figsize=(16,10))
+    plt.title("Graph of ID3")
+    plt.xlabel("Entries")
+    plt.ylabel("Prediction")
+    plt.grid(which='major', linestyle='-',linewidth='0.5', color='green')
+    plt.grid(which='minor', linestyle=':',linewidth='0.5', color='black')
+    plt.show()
+
