@@ -1,0 +1,79 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report, mean_squared_error, \
+    mean_absolute_error
+import warnings
+warnings.filterwarnings('ignore')
+
+dataset= pd.read_csv('Weather.csv')
+
+
+
+features = ['precipitation','temp_max','temp_min','wind']
+dataset['weather'] = dataset['weather'].map({'rain':1,'drizzle':0,'fog':0,'sun':0,'snow':0})
+target = ['weather']
+
+
+
+
+X = dataset[features]
+Y = dataset[target]
+
+#print(dataset.head())
+
+x_train, x_test, y_train, y_test = train_test_split(X, Y,
+                                                    train_size=0.7, test_size=0.3, shuffle=False)
+
+'''print("X_train: {}, x_test: {}".format(len(x_train), len(x_test)))
+print("Y_train: {}, y_test: {}".format(len(y_train), len(y_test)))
+
+print("\n")'''
+
+
+
+model = LogisticRegression(C=1.0, penalty='l2',solver= 'sag')
+model.fit(x_train, y_train)
+
+
+
+
+predicted = model.predict(x_test)
+
+def Test():
+    print("Testing Accuracy in Logistic Regression: {}".format(accuracy_score(y_test, predicted)))
+    print("Training Accuracy in Logistic Regression: {}".format(model.score(x_train, y_train)))
+
+    print('mean_absolute_error Logistic Regression  : ', mean_absolute_error(y_test, predicted))
+
+
+predict3 = model.predict([[0,12.8,5,4.7]])
+predict4 = model.predict([[10.9,10.6,2.8,4.5]])
+predict5 = model.predict([[0,10,2.8,2]])
+predict6 = model.predict([[4.1,4.4,0.6,5.3]])
+
+# print(predict3)
+# print(predict4)
+# print(predict5)
+# print(predict6)
+
+def GraphL():
+    y1=y_test.to_numpy().flatten()
+    y2=predicted.flatten()
+
+    df = pd.DataFrame({'Actual': y1, 'Predicted': y2})
+    #print(df)
+    df1 = df.head(25)
+    print("Logistic Regression" + str(df1))
+    df1.plot(kind='bar', figsize=(16, 10))
+
+
+    plt.xlabel("Entries")
+    plt.ylabel(" Actual vs Prediction")
+    plt.title("Logistic Regression Graph")
+
+    plt.grid(which='major', linestyle='-',linewidth='0.5',color='green' )
+    plt.grid(which='minor', linestyle=':',linewidth='0.5',color='black')
+    plt.show()
